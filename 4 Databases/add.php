@@ -2,17 +2,17 @@
 require_once 'config.php';
 $result = false;
 if(!empty($_POST)){
-	$name = $_POST['name'];
-	$email = $_POST['email'];
+	$name = $_POST['nombres'];
+	$email = $_POST['mensajeria'];
 	$password = md5($_POST['password']);
 
-	$sql = "INSERT INTO users(name, email, password) VALUES (:name, :email, :password)";
+	$sql = "INSERT INTO users(name, email, password) VALUES (:nombres, :mensajeria, :password)";
 
 	$query = $pdo->prepare($sql);
 
 	$result = $query->execute([
-		'name' => $name,
-		'email' => $email,
+		'nombres' => $name,
+		'mensajeria' => $email,
 		'password' => $password
 	]);
 
@@ -48,10 +48,10 @@ if(!empty($_POST)){
 		<form action="add.php" method="post">
 			<div>
 				<label for="name">Name</label>
-				<input type="text" name="name" id="name">
+				<input type="text" name="nombres" id="aaa">
 				<br>
 				<label for="email">Email</label>
-				<input type="text" name="email" id="email">
+				<input type="text" name="mensajeria" id="email">
 				<br>
 				<label for="pass">Password</label>
 				<input type="password" name="password" id="password">

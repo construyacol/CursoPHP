@@ -3,7 +3,7 @@
 
 //Parametro1: el host es donde tenemos nuestra base de datos, puede ser una dirección ip, en este caso es localhost
 $dbHost = 'localHost';
-$dbName = 'cursophp';
+$dbName = 'inmob';
 $dbUser = 'root';
 $dbPass = '';
 
