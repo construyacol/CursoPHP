@@ -1,0 +1,77 @@
+Instalación composer:
+1.descargar composer.exe de: https://getcomposer.org/Composer-Setup.exe e instalarlo(seleccionar archivo php.exe de xampp/htdocs/php/php.exe " creo")
+2. Descargar paquete composer.phar de: https://getcomposer.org/composer.phar y pegarlo en la raiz padre del proyecto en el que vamos a manejar dependencias
+3. Crear archivo .js en la raiz padre del proyecto con lo siguiente: 
+{   "autoload":{},
+    "require": {}    }
+4. desde la terminal acceder a la raiz padre de nuestro proyecto donde tenemos composer(.phar - .json) y ejecutar el siguiente comando: "php composer.phar install" , esto nos crea una carpeta llamada vendor donde estaran todas las dependencias de terceros instaladas en nuestro proyecto :D
+Extra!.
+5. Creamos un directorio en la raiz padre llamada "public/", dentro de ella creamos un archivo llamado index.php
+5.1 En este archivo "public/index.php" codeamos los routers de nuestra app, ejemplo:
+
+<?php
+//Manejo de errores
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+//Unica conexión a ser llamada en el proyecto
+include_once '../conexion.php';
+
+//Enrutador
+$route = $_GET['route']??'/';
+
+//Switch case enrrutadores
+switch ($route) {
+	case '/':
+		require '../index.php';
+		break;
+	
+	case '/admin':
+		require '../admin/index.php';
+		break;
+
+	case '/admin/posts':
+		require '../admin/post.php';
+		break;
+
+}
+
+?>
+
+
+
+Nuestra primera dependencia
+Instalaremos una dependencia llamada "Phroute/" para generar conexiones de router mucho mas rapidas a nuestro proyecto. Documentación dependencia :https://packagist.org/packages/phroute/phroute
+
+1. composer require phroute/phroute
+2. agregamos en public/index.php
+2.1 (require_once '../vendor/autoload.php') - Simplemente con agregar esta parte ya podemos utilizar las funciones de phroute sin necesidad de hacer los include o los requires de los archivos que utiliza la libreria
+3 utilizamos los enrrutadores de nuestra libreria en public/index.php:
+//empezamos definiendo rutas con RouteCollector
+use Phroute\Phroute\RouteCollector;
+
+$router = new RouteCollector();
+
+//Tenemos que utilizar un dispatcher
+$dispatcher = new Phroute\Phroute\Dispatcher($router->getData());
+
+//Enrutador de index.php
+$router->get('/',function() use ($pdo){
+	
+$query = $pdo->prepare('SELECT * FROM blog_posts ORDER BY id DESC');
+$query->execute();
+
+$blogPosts = $query->fetchAll(PDO::FETCH_ASSOC);
+include '../index.php';
+
+});
+
+
+//Generamos una respuesta que es lo que regresa el dispatcher
+
+$response = $dispatcher->dispatch($_SERVER['REQUEST_METHOD'], $route);
+
+echo $response;
+
+
